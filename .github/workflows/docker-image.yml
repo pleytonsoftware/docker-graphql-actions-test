@@ -31,4 +31,4 @@ jobs:
 
       - name: Push the Docker image
         run: |
-          docker push pleytonsoftware/graphql-actions:0.0.2 .
+          docker push pleytonsoftware/graphql-actions:0.0.2

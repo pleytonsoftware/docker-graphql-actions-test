@@ -28,7 +28,9 @@ jobs:
       - name: Build the Docker image
         run: |
           docker build --tag pleytonsoftware/graphql-actions:0.0.2 .
+          docker tag pleytonsoftware/graphql-actions:0.0.2 pleytonsoftware/graphql-actions:latest
 
       - name: Push the Docker image
         run: |
           docker push pleytonsoftware/graphql-actions:0.0.2
+          docker push pleytonsoftware/graphql-actions:latest

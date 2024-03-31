@@ -2,17 +2,33 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ['main']
   pull_request:
-    branches: [ "main" ]
+    branches: ['main']
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag pleytonsoftware/graphql-actions:0.0.1
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Docker login
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          echo "Starting docker login"
+          docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+          echo "Finished docker login"
+
+      - name: Build the Docker image
+        run: |
+          docker build --tag pleytonsoftware/graphql-actions:0.0.2 .
+
+      - name: Push the Docker image
+        run: |
+          docker push pleytonsoftware/graphql-actions:0.0.2 .

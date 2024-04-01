@@ -30,6 +30,7 @@ jobs:
       - name: get-npm-version
         id: package-version
         uses: martinbeentjes/npm-get-version-action@v1.3.1
+      # for monorepo use path:
       #   with:
       #     path: packages/<yourpackage>
 
@@ -37,20 +38,20 @@ jobs:
         env:
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-          # VERSION: ${{ steps.version.outputs.version }}
-          VERSION: ${{ steps.package-version.outputs.current-version }}
+          # VERSION: ${{ steps.version.outputs.version }} # this is from semantic version
+          VERSION: ${{ steps.package-version.outputs.current-version }} # this is from get-current-package-version
         run: |
           echo "Starting docker login"
           docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
           echo "Finished docker login"
           echo "VERSION: $VERSION"
 
-      # - name: Build the Docker image
-      #   run: |
-      #     docker build --tag pleytonsoftware/graphql-actions:${VERSION} .
-      #     docker tag pleytonsoftware/graphql-actions:${VERSION} pleytonsoftware/graphql-actions:latest
+      - name: Build the Docker image
+        run: |
+          docker build --tag pleytonsoftware/graphql-actions:${VERSION} .
+          docker tag pleytonsoftware/graphql-actions:${VERSION} pleytonsoftware/graphql-actions:latest
 
-      # - name: Push the Docker image
-      #   run: |
-      #     docker push pleytonsoftware/graphql-actions:${VERSION}
-      #     docker push pleytonsoftware/graphql-actions:latest
+      - name: Push the Docker image
+        run: |
+          docker push pleytonsoftware/graphql-actions:${VERSION}
+          docker push pleytonsoftware/graphql-actions:latest

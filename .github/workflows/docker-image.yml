@@ -16,21 +16,39 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Git Semantic Version
+        uses: PaulHatch/semantic-version@v4.0.3
+        id: version
+        with:
+          tag_prefix: ''
+          major_pattern: 'major:'
+          minor_pattern: 'feat:'
+          format: '${major}.${minor}.${patch}-prerelease${increment}'
+
+      # https://github.com/marketplace/actions/get-current-package-version
+      # - name: get-npm-version
+      #   id: package-version
+      #   uses: martinbeentjes/npm-get-version-action@v1.3.1
+      #   with:
+      #     path: packages/<yourpackage>
+
       - name: Docker login
         env:
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          VERSION: ${{ steps.version.outputs.version }}
         run: |
           echo "Starting docker login"
           docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
           echo "Finished docker login"
+          echo "VERSION: $VERSION"
 
-      - name: Build the Docker image
-        run: |
-          docker build --tag pleytonsoftware/graphql-actions:0.0.2 .
-          docker tag pleytonsoftware/graphql-actions:0.0.2 pleytonsoftware/graphql-actions:latest
+      # - name: Build the Docker image
+      #   run: |
+      #     docker build --tag pleytonsoftware/graphql-actions:${VERSION} .
+      #     docker tag pleytonsoftware/graphql-actions:${VERSION} pleytonsoftware/graphql-actions:latest
 
-      - name: Push the Docker image
-        run: |
-          docker push pleytonsoftware/graphql-actions:0.0.2
-          docker push pleytonsoftware/graphql-actions:latest
+      # - name: Push the Docker image
+      #   run: |
+      #     docker push pleytonsoftware/graphql-actions:${VERSION}
+      #     docker push pleytonsoftware/graphql-actions:latest
